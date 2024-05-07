@@ -43,7 +43,7 @@ def backup_user(request, username):
         return Response({'status': 'error', 'message': 'User already backed up'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['DELETE'])
-def delete_user(username):
+def delete_user(request, username):
     """ Deelete user backup from DB, along with the linked repositories """
     try:
         user = BackupUser.objects.get(username=username)
