@@ -95,6 +95,7 @@ def delete_repository(request, repository_url):
     return Response({'status': 'success', 'message': 'Repository deleted successfully.'})
 
 class UserViewSet(viewsets.ModelViewSet):
+    """ API endpoint that allows users to be viewed."""
     queryset = BackupUser.objects.all()
     serializer_class = UserSerializer
 
@@ -107,5 +108,6 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         
 class RepositoryViewSet(viewsets.ModelViewSet):
+    """ API endpoint that allows repositories to be viewed"""
     queryset = BackupRepository.objects.all()
     serializer_class = RepositorySerializer

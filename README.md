@@ -1,68 +1,108 @@
-# Bjumper Backend Test
+# Project Documentation: GitHub Repository Backup System
 
-## Table of Contents
-1. [Summary](#summary)
-2. [Requirements](#requirements)
-    - [Notes](#notes)
-3. [Instructions](#instructions)
-4. [Evaluation Criteria](#evaluation-criteria)
-5. [Submission](#submission)
+This documentation provides all necessary instructions on setting up and running the GitHub Repository Backup System. This system is built using Django and Django REST Framework, designed to interact with the GitHub API for backing up user and repository data into a PostgreSQL database
 
-## Summary
+## Overview
+This application allows you to:
+   * Fetch user information from GitHub and display it in the API.
+   * Backup user data into a PostgreSQL database.
+   * Backup repository details that belong to a particular user.
+   * Delete backups of users and their repositories.
 
-This test is designed to evaluate the skills of backend candidates with a focus on Python and Django. The goal is to create an app that backs up repositories using the [GitHub API](https://docs.github.com/en/rest) and saves them in a separate database.
+## Prerequisites
 
-## Requirements
+Before you begin, ensure you have met the following requirements:
 
-The app must be able to handle the following logic from an API using HTTP requests:
-* **Fetch users**: The endpoint must fetch the user information and display some of it in our API.
-   * Input: username
-   * Response: the information about the selected user if it exists in our DB and all the repositories linked to it.
-* **Backup user**:
-   * Input: username
-   * Behaviour: If the user exists on **GitHub**, it must store a "backup" user in the DB with the following information:
-     * Username
-     * GitHub URL
-* **Delete user backup**:
-  * Input: username
-  * Behaviour: The selected user "backup" must be deleted from our DB, along with the linked repositories.
-* **Backup repository**:
-   * Input: repository URL (GitHub URL) and username
-   * Behaviour: The repository is stored in our DB as a "backup" **only if the user exists in our DB**. It must validate that the username owns the repository on GitHub before creating the backup. The "backup" of the repository must store the following information:
-     * Owner user
-     * GitHub Repository URL
-     * Repository name
-* **Delete repository**:
-   * Input: repository URL
-   * Behaviour: The repository "backup" is deleted from our DB if it exists.
+- You have installed the latest version of [Python](https://www.python.org/downloads/).
+- You have a [PostgreSQL](https://www.postgresql.org/download/) server running.
+- You have installed the necessary Python packages listed in the `requirements.txt` file. You can install them using pip:
 
-### Notes:
-* We do not expect an actual backup of the repository, just a few fields. The goal of the exercise is to evaluate how candidates interact with APIs and databases.
-* The goal of the exercise is not to spend more than 2 or 3 hours on it. If there is anything missing after that time, feel free to explain what's missing in the submission email.
-* The use of libraries is encouraged; we don't expect candidates to reinvent the wheel.
-* Feel free to use Django and Django REST Framework.
-* We encourage the use of PostgreSQL for the database, but it is not mandatory.
+pip install -r requirements.txt
 
-## Instructions
+## Installation and Setup
 
-Candidates are required to:
+* Step 1: Clone the Repository
 
-1. Create a new **private** repository on GitHub named `Bjumper_Backend_Test`.
-2. Develop a web application that enables searching GitHub users. While the primary focus is on Python, candidates may use Django or any other Python framework.
-3. Upload the solution to the created repository.
+   git clone https://github.com/yourusername/github-backup.git
+   cd github-backup
 
-## Evaluation Criteria
+* Step 2: Set Up a Virtual Environment (Optional but recomended)
 
-We value quality over quantity. When reviewing your submission, we will consider the following:
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 
-- **Functionality**: The application should work as expected and handle different scenarios gracefully.
-- **Code Quality**: Well-structured, readable, and maintainable code.
-- **User Experience**: Though not the primary focus, a clean and user-friendly API is highly valued.
-- **Documentation**: Clear instructions on how to set up and run your project and use the API are essential.
-- **Best Practices**: Compliance with industry standards and best practices in coding and security.
+* Step 3: Install Dependencies
+  
+  pip install -r requirements.txt
 
-## Submission
+* Step 4: Configure Environment Variables
 
-Once you have completed the exercise, please send an email with the link to your private repository to salcazar@bjumper.com. Remember to provide temporary access to the repository.
+Create a .env file in the root directory of your project and fill it with your PostgreSQL database settings and GitHub token:
 
-We appreciate your effort and time in participating in this test and look forward to reviewing your submission!
+   DB_NAME=your_db_name
+   DB_USER=your_db_user
+   DB_PASSWORD=your_db_password
+   DB_HOST=localhost
+   DB_PORT=5432
+   GITHUB_TOKEN=your_github_token
+
+* Step 5: Database Migration
+   Run migrations to set up your database schema:
+
+   python manage.py makemigrations
+   python manage.py migrate
+
+* Step 6: Start the Server
+  Run the Django development server:
+
+  python manage.py runserver
+
+## API Usage with cURL Commands
+   Here are examples of cURL commands that you can use to interact with the API endpoints.
+
+### Fetch users
+* URL: /users/<username>/
+* Method: GET
+* Description: Fetches and displays GitHub user information if it exists in the database along with linked repositories.
+* cURL Example:
+
+curl -X GET http://localhost:8000/users/<username>/
+
+### Backup User
+* URL: /backup_user/<username>/
+* Method: POST
+* Description: Backups a user from GitHub into the database if they exist on GitHub.
+* cURL Example:
+
+curl -X POST http://localhost:8000/backup_user/<username>/
+
+### Delete User Backup
+* URL: /delete_user/<username>/
+* Method: DELETE
+* Description: Deletes a backed-up user and their repositories from the database.
+* cURL Example:
+
+curl -X DELETE http://localhost:8000/delete_user/<username>/
+
+### Backup Repository
+
+* URL: /backup_repository/<username>/<repository_url>/
+* Method: POST
+* Description: Backups a repository if the user exists in the database and owns the repository on GitHub.
+* cURL Example:
+
+curl -X POST http://localhost:8000/backup_repository/<username>/<repository_url>/
+
+### Delete Repository Backup
+
+* URL: /delete_repository/<repository_url>/
+* Method: DELETE
+* Description: Deletes a backed-up repository from the database.
+* cURL Eample:
+
+curl -X DELETE http://localhost:8000/delete_repository/<repository_url>/
+
+#### Notes:
+
+Replace <username> with a valid GitHub username
+Replace <repository_url> with the full repository URL (e.g., github.com/<username>/<repository>).
