@@ -23,8 +23,7 @@ pip install -r requirements.txt
 
 * Step 1: Clone the Repository
 
-   git clone https://github.com/yourusername/github-backup.git
-   cd github-backup
+   git clone https://github.com/chiaradigii/Bjumper_Backend_Test.git
 
 * Step 2: Set Up a Virtual Environment (Optional but recomended)
 
